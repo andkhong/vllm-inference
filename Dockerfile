@@ -7,10 +7,10 @@ RUN curl -fsSL https://astral.sh/uv/install.sh | bash
 RUN uv pip install -r requirements.txt
 
 # Get the secret from the secret manager
-RUN uv run python -c "from app.utils.secret_manager import get_secret; print(get_secret())"
+RUN export HUGGING_FACE_TOKEN=$(uv run python -c "from app.utils.secret_manager import get_secret; get_secret()")
 
 # Set the secret as an environment variable
-ENV HUGGING_FACE_TOKEN=$(uv run python -c "from app.utils.secret_manager import get_secret; print(get_secret())")
+ENV HUGGING_FACE_TOKEN=$HUGGING_FACE_TOKEN
 
 # Authorize the Hugging Face token
 RUN uv run python -c "from huggingface_hub import login; login(token=os.getenv('HUGGING_FACE_TOKEN'))"
